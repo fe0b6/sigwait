@@ -76,13 +76,26 @@ func SetWaitTime(t int) {
 
 // Wait - ожидаем команды на выход
 func Wait() {
-	wg.Add(1)
+	AddWait()
 	_ = <-exitChan
+}
+
+// AddWait - Добавляем счетчик работающих потоков
+func AddWait() {
+	wg.Add(1)
 }
 
 // Release - отмечаем что поток готов к выходу
 func Release() {
 	wg.Done()
+}
+
+// CheckExited - Если программа завершается, то вернет true
+func CheckExited() (ok bool) {
+	if tools.IsClosedChan(exitChan) {
+		ok = true
+	}
+	return
 }
 
 // Exit - функция корректного выхода
