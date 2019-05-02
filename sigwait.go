@@ -41,7 +41,7 @@ func runWaiter() {
 		os.Exit(2)
 	}()
 
-	wg.Done()
+	wg.Wait()
 
 	log.Println("[info]", "Работа завершена корректно")
 
