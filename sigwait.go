@@ -24,6 +24,10 @@ func init() {
 	// Создаем канал, к которому будут подключаться в ожидании выхода
 	exitChan = make(chan struct{})
 
+	go runWaiter()
+}
+
+func runWaiter() {
 	// Перехват сигналов
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGTERM, syscall.SIGKILL, os.Interrupt)
