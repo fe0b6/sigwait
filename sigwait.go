@@ -1,7 +1,6 @@
 package sigwait
 
 import (
-	"log"
 	"os"
 	"os/signal"
 	"sync"
@@ -9,6 +8,7 @@ import (
 	"time"
 
 	"github.com/fe0b6/tools"
+	"gogs.3l8.ru/dnk/golog"
 )
 
 var (
@@ -36,14 +36,14 @@ func runWaiter() {
 
 	go func() {
 		time.Sleep(time.Duration(waitTime) * time.Second)
-		log.Println("[error]", "Неудалось завершить работу корректно")
+		golog.Error("Неудалось завершить работу корректно")
 
 		os.Exit(2)
 	}()
 
 	wg.Wait()
 
-	log.Println("[info]", "Работа завершена корректно")
+	golog.Info("Работа завершена корректно")
 
 	os.Exit(0)
 }
@@ -53,12 +53,12 @@ func waitExit(c chan os.Signal) {
 		select {
 		case s := <-c:
 			if !tools.InArray(ignoreSignals, s.String()) {
-				log.Println("[info]", "Получен сигнал: ", s)
+				golog.Info("Получен сигнал: ", s)
 				return
 			}
 
 		case <-exitChan:
-			log.Println("[info]", "Самоинициализированный выход")
+			golog.Info("Самоинициализированный выход")
 			return
 		}
 	}
