@@ -50,7 +50,7 @@ func waitExit(c chan os.Signal) {
 		select {
 		case s := <-c:
 			if !tools.InArray(ignoreSignals, s.String()) {
-				golog.Info("Получен сигнал: ", s)
+				golog.Info("Получен сигнал:", s)
 				return
 			}
 
