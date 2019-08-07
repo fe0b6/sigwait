@@ -12,18 +12,14 @@ import (
 )
 
 var (
-	exitChan      chan struct{}
-	waitTime      int
+	selfExitChan  = make(chan struct{})
+	exitChan      = make(chan struct{})
+	waitTime      = 5
 	ignoreSignals []string
 	wg            sync.WaitGroup
 )
 
 func init() {
-	waitTime = 5
-
-	// Создаем канал, к которому будут подключаться в ожидании выхода
-	exitChan = make(chan struct{})
-
 	go runWaiter()
 }
 
@@ -33,6 +29,7 @@ func runWaiter() {
 	signal.Notify(c, syscall.SIGTERM, syscall.SIGKILL, os.Interrupt)
 
 	waitExit(c)
+	close(exitChan)
 
 	go func() {
 		time.Sleep(time.Duration(waitTime) * time.Second)
@@ -57,7 +54,7 @@ func waitExit(c chan os.Signal) {
 				return
 			}
 
-		case <-exitChan:
+		case <-selfExitChan:
 			golog.Info("Самоинициализированный выход")
 			return
 		}
@@ -100,5 +97,5 @@ func CheckExited() (ok bool) {
 
 // Exit - функция корректного выхода
 func Exit() {
-	close(exitChan)
+	close(selfExitChan)
 }
