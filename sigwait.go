@@ -20,6 +20,10 @@ var (
 )
 
 func init() {
+	go runWaiter()
+}
+
+func runWaiter() {
 	wg.Add(1)
 	// Перехват сигналов
 	c := make(chan os.Signal, 1)
