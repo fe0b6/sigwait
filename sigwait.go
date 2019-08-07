@@ -19,14 +19,15 @@ var (
 	wg            sync.WaitGroup
 )
 
-// RunWaiter - Включаем ожидание выхода
-func RunWaiter() {
+func init() {
+	wg.Add(1)
 	// Перехват сигналов
 	c := make(chan os.Signal, 1)
 	signal.Notify(c, syscall.SIGTERM, syscall.SIGKILL, os.Interrupt)
 
 	waitExit(c)
 	close(exitChan)
+	wg.Done()
 
 	go func() {
 		time.Sleep(time.Duration(waitTime) * time.Second)
@@ -34,9 +35,11 @@ func RunWaiter() {
 
 		os.Exit(2)
 	}()
+}
 
+// RunWaiter - Включаем ожидание выхода
+func RunWaiter() {
 	wg.Wait()
-
 	golog.Info("Работа завершена корректно")
 }
 
